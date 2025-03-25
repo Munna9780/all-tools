@@ -70,7 +70,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             }),
           }}
         />
-        <title>Free Tools Platform</title>
+        <title>Invoice Free tool</title>
         <meta name="description" content="A collection of free and useful tools" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#000000" />
