@@ -120,32 +120,94 @@ export function AudioConverter() {
       // Create a blob with the file data
       const blob = new Blob([fileData], { type: `audio/${outputFormat}` })
 
-      // Create a download link
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement("a")
-      a.href = url
-      a.download = `converted-audio.${outputFormat}`
-      // Set these attributes to help with download on mobile
-      a.setAttribute("target", "_blank")
-      a.setAttribute("rel", "noopener noreferrer")
-      // Make the element visible to ensure it works on mobile
-      a.style.display = "none"
-      // Append to document body
-      document.body.appendChild(a)
-      // Use a timeout to allow the browser to process
-      setTimeout(() => {
-        a.click()
-        // Clean up
+      // Check if user is on mobile
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (isMobile) {
+        // Mobile-specific download approach
+        try {
+          // Create a data URL for direct download
+          const reader = new FileReader();
+          reader.onload = function() {
+            const dataUrl = reader.result;
+            
+            // Create a visible download link that will respond to user interaction
+            const downloadLink = document.createElement('a');
+            downloadLink.href = dataUrl as string;
+            downloadLink.download = `converted-audio.${outputFormat}`;
+            downloadLink.textContent = "Download File";
+            downloadLink.className = "mobile-download-link";
+            downloadLink.style.display = "block";
+            downloadLink.style.marginTop = "20px";
+            downloadLink.style.padding = "12px";
+            downloadLink.style.backgroundColor = "var(--primary)";
+            downloadLink.style.color = "white";
+            downloadLink.style.borderRadius = "6px";
+            downloadLink.style.textAlign = "center";
+            downloadLink.style.textDecoration = "none";
+            downloadLink.style.fontWeight = "bold";
+            
+            // Find a good place to append the link
+            const downloadContainer = document.createElement('div');
+            downloadContainer.id = "mobile-download-container";
+            downloadContainer.appendChild(downloadLink);
+            
+            // Remove any existing download containers first
+            const existingContainer = document.getElementById("mobile-download-container");
+            if (existingContainer) {
+              existingContainer.remove();
+            }
+            
+            // Add it to the page near the convert button
+            const buttonParent = document.querySelector('.w-full.mt-6')?.parentElement;
+            if (buttonParent) {
+              buttonParent.appendChild(downloadContainer);
+            }
+            
+            toast({
+              title: "Conversion complete",
+              description: "Tap the Download button to save your file.",
+            });
+          };
+          reader.readAsDataURL(blob);
+        } catch (error) {
+          console.error("Mobile download error:", error);
+          // Fallback to traditional method if the mobile approach fails
+          downloadTraditional();
+        }
+      } else {
+        // Desktop download approach
+        downloadTraditional();
+      }
+      
+      function downloadTraditional() {
+        // Create a download link with proper attributes for cross-browser compatibility
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `converted-audio.${outputFormat}`;
+        // Set these attributes to help with download on mobile
+        a.setAttribute("target", "_blank");
+        a.setAttribute("rel", "noopener noreferrer");
+        // Make the element visible to ensure it works on mobile
+        a.style.display = "none";
+        // Append to document body
+        document.body.appendChild(a);
+        // Use a timeout to allow the browser to process
         setTimeout(() => {
-          document.body.removeChild(a)
-          URL.revokeObjectURL(url)
-        }, 100)
-      }, 0)
+          a.click();
+          // Clean up
+          setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          }, 100);
+        }, 0);
+      }
 
       toast({
         title: "Conversion complete",
         description: `Your audio has been converted to ${outputFormat.toUpperCase()}.`,
-      })
+      });
     } catch (error) {
       toast({
         title: "Conversion failed",

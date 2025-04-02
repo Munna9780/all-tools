@@ -154,29 +154,84 @@ export function ImageConverter() {
       const dataURL = canvas.toDataURL(mimeType, quality / 100)
 
       // Create a download link
-      const a = document.createElement("a")
-      a.href = dataURL
-      a.download = `converted-image.${outputFormat}`
-      // Set these attributes to help with download on mobile
-      a.setAttribute("target", "_blank")
-      a.setAttribute("rel", "noopener noreferrer")
-      // Make the element visible to ensure it works on mobile
-      a.style.display = "none"
-      // Append to document body
-      document.body.appendChild(a)
-      // Use a timeout to allow the browser to process
-      setTimeout(() => {
-        a.click()
-        // Clean up
+      // Check if user is on mobile
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (isMobile) {
+        // Mobile-specific download approach
+        try {
+          // Create a visible download link that will respond to user interaction
+          const downloadLink = document.createElement('a');
+          downloadLink.href = dataURL;
+          downloadLink.download = `converted-image.${outputFormat}`;
+          downloadLink.textContent = "Download Image";
+          downloadLink.className = "mobile-download-link";
+          downloadLink.style.display = "block";
+          downloadLink.style.marginTop = "20px";
+          downloadLink.style.padding = "12px";
+          downloadLink.style.backgroundColor = "var(--primary)";
+          downloadLink.style.color = "white";
+          downloadLink.style.borderRadius = "6px";
+          downloadLink.style.textAlign = "center";
+          downloadLink.style.textDecoration = "none";
+          downloadLink.style.fontWeight = "bold";
+          
+          // Find a good place to append the link
+          const downloadContainer = document.createElement('div');
+          downloadContainer.id = "mobile-download-container";
+          downloadContainer.appendChild(downloadLink);
+          
+          // Remove any existing download containers first
+          const existingContainer = document.getElementById("mobile-download-container");
+          if (existingContainer) {
+            existingContainer.remove();
+          }
+          
+          // Add it to the page near the convert button
+          const buttonParent = document.querySelector('.w-full.mt-6')?.parentElement;
+          if (buttonParent) {
+            buttonParent.appendChild(downloadContainer);
+          }
+          
+          toast({
+            title: "Conversion complete",
+            description: "Tap the Download Image button to save your file.",
+          });
+        } catch (error) {
+          console.error("Mobile download error:", error);
+          // Fallback to traditional method if the mobile approach fails
+          downloadTraditional();
+        }
+      } else {
+        // Desktop download approach
+        downloadTraditional();
+      }
+      
+      function downloadTraditional() {
+        const a = document.createElement("a");
+        a.href = dataURL;
+        a.download = `converted-image.${outputFormat}`;
+        // Set these attributes to help with download on mobile
+        a.setAttribute("target", "_blank");
+        a.setAttribute("rel", "noopener noreferrer");
+        // Make the element visible to ensure it works on mobile
+        a.style.display = "none";
+        // Append to document body
+        document.body.appendChild(a);
+        // Use a timeout to allow the browser to process
         setTimeout(() => {
-          document.body.removeChild(a)
-        }, 100)
-      }, 0)
+          a.click();
+          // Clean up
+          setTimeout(() => {
+            document.body.removeChild(a);
+          }, 100);
+        }, 0);
+      }
 
       toast({
         title: "Conversion complete",
         description: `Your image has been converted to ${outputFormat.toUpperCase()}.`,
-      })
+      });
     } catch (error) {
       toast({
         title: "Conversion failed",
