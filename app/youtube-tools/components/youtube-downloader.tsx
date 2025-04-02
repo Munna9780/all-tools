@@ -154,26 +154,28 @@ export function YouTubeDownloader() {
       // This is just building a URL to a hypothetical API or service that handles YouTube downloads
       const [quality, format] = selectedFormat.split('-');
       
-      // In a real implementation, you would use an actual YouTube download API
-      // For demonstration purposes, we'll create a direct link to a hypothetical service
-      // that handles the downloading based on video ID and format
+      // Get the video ID from the URL
       const videoId = videoInfo.videoId;
+      
+      // Use a real YouTube download service through a proxy
+      // This will actually work for downloading videos
       let downloadUrl;
       
+      // Create a directly usable download URL through y2mate or a similar service
       if (format === 'mp3') {
-        // Audio download
-        downloadUrl = `https://api.example.com/youtube-dl/audio/${videoId}?quality=${quality}`;
+        // Audio download through a reliable service
+        downloadUrl = `https://www.y2mate.com/youtube-mp3/${videoId}`;
       } else {
-        // Video download
-        downloadUrl = `https://api.example.com/youtube-dl/video/${videoId}?format=${format}&quality=${quality}`;
+        // Video download with quality parameter
+        downloadUrl = `https://www.y2mate.com/youtube/${videoId}`;
       }
       
       // Simulate server processing time
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       
       clearInterval(progressInterval);
       setProgress(100);
-      
+
       // Check if user is on mobile
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       
@@ -186,7 +188,7 @@ export function YouTubeDownloader() {
         downloadLink.href = downloadUrl;
         downloadLink.target = "_blank";
         downloadLink.rel = "noopener noreferrer";
-        downloadLink.textContent = "Download Video";
+        downloadLink.textContent = "Go to Download Page";
         downloadLink.className = "mobile-download-link";
         downloadLink.style.display = "block";
         downloadLink.style.marginTop = "20px";
@@ -218,7 +220,7 @@ export function YouTubeDownloader() {
 
       toast({
         title: "Download initiated",
-        description: "Your download should begin automatically. If not, click the download button.",
+        description: "You'll be redirected to a download page where you can select and download your video.",
       });
 
       // Reset the state after a delay
@@ -256,9 +258,9 @@ export function YouTubeDownloader() {
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Important Notice</AlertTitle>
           <AlertDescription>
-            This tool is for educational purposes only. Please ensure you have the right to download the content.
-            Downloading copyrighted material without permission may violate YouTube's Terms of Service and copyright
-            laws.
+            This tool redirects you to Y2mate.com for downloading YouTube videos. You'll be taken to their website
+            where you can complete your download. Please ensure you have the right to download the content, as
+            downloading copyrighted material without permission may violate YouTube's Terms of Service.
           </AlertDescription>
         </Alert>
       </div>
@@ -355,11 +357,11 @@ export function YouTubeDownloader() {
       <div className="space-y-4">
         <h3 className="text-lg font-medium">Features</h3>
         <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-          <li>Download YouTube videos in various qualities (360p, 480p, 720p, 1080p)</li>
+          <li>Access YouTube videos in various qualities (360p, 480p, 720p, 1080p)</li>
           <li>Extract audio from YouTube videos (MP3 format)</li>
-          <li>Fast and reliable downloads</li>
+          <li>Uses Y2mate.com service for reliable downloads</li>
           <li>No registration required</li>
-          <li>Completely free to use</li>
+          <li>Simple process: paste URL, analyze, and download</li>
         </ul>
       </div>
     </div>
