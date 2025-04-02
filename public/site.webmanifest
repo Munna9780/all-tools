@@ -1,0 +1,81 @@
+{
+  "name": "Free Tools Platform - Online File Converter",
+  "short_name": "File Converter",
+  "description": "Free online file converter tool. Convert images, audio, video, documents and archives instantly.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Image Converter",
+      "short_name": "Images",
+      "description": "Convert images between different formats",
+      "url": "/image-converter",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Audio Converter",
+      "short_name": "Audio",
+      "description": "Convert audio between different formats",
+      "url": "/audio-converter",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Video Converter",
+      "short_name": "Video",
+      "description": "Convert video between different formats",
+      "url": "/video-converter",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Document Converter",
+      "short_name": "Docs",
+      "description": "Convert documents between different formats",
+      "url": "/document-converter",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Archive Converter",
+      "short_name": "Archives",
+      "description": "Convert archives between different formats",
+      "url": "/archive-converter",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ],
+  "categories": ["utilities", "productivity", "tools"],
+  "screenshots": [
+    {
+      "src": "/screenshot1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "File Converter Homepage"
+    },
+    {
+      "src": "/screenshot2.png",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "platform": "narrow",
+      "label": "File Converter Mobile View"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7"
+} 
