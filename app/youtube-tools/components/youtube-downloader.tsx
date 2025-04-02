@@ -19,6 +19,7 @@ type VideoInfo = {
   thumbnail: string
   duration: string
   author: string
+  videoId: string
   formats: Array<{
     quality: string
     format: string
@@ -67,16 +68,23 @@ export function YouTubeDownloader() {
     setIsLoading(true)
 
     try {
+      // Extract video ID from URL
+      const videoId = extractVideoId(url);
+      if (!videoId) {
+        throw new Error("Could not extract video ID");
+      }
+
       // In a real application, you would make an API call to fetch video information
-      // This is a simulated response for demonstration purposes
+      // For demonstration, we'll use video ID to build a more realistic example
       await new Promise((resolve) => setTimeout(resolve, 1500))
 
-      // Mock video info
+      // Create sample video info based on the actual URL
       const mockVideoInfo: VideoInfo = {
-        title: "Sample YouTube Video",
-        thumbnail: "/placeholder.svg?height=720&width=1280",
+        title: "Video from " + url,
+        thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
         duration: "10:30",
-        author: "Sample Channel",
+        author: "YouTube Channel",
+        videoId: videoId,
         formats: [
           { quality: "360p", format: "mp4", size: "20 MB" },
           { quality: "480p", format: "mp4", size: "35 MB" },
@@ -86,7 +94,7 @@ export function YouTubeDownloader() {
         ],
       }
 
-      setVideoInfo(mockVideoInfo)
+      setVideoInfo(mockVideoInfo);
       setSelectedFormat(mockVideoInfo.formats[0].quality + "-" + mockVideoInfo.formats[0].format)
 
       toast({
@@ -102,6 +110,13 @@ export function YouTubeDownloader() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // Helper function to extract video ID from various YouTube URL formats
+  const extractVideoId = (url: string): string | null => {
+    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[7].length === 11) ? match[7] : null;
   }
 
   const downloadVideo = async () => {
@@ -135,107 +150,75 @@ export function YouTubeDownloader() {
 
       const progressInterval = simulateProgress()
 
-      // In a real application, you would make an API call to download the video
-      // This is a simulated response for demonstration purposes
-      await new Promise((resolve) => setTimeout(resolve, 4000))
-
-      clearInterval(progressInterval)
-      setProgress(100)
-
-      // Create a mock download with dummy video data
-      const dummyData = new Uint8Array(1024 * 1024); // 1MB of dummy data
-      const blob = new Blob([dummyData], { type: 'video/mp4' });
-      
-      // Get format information
+      // Use a third-party API service for YouTube downloads
+      // This is just building a URL to a hypothetical API or service that handles YouTube downloads
       const [quality, format] = selectedFormat.split('-');
+      
+      // In a real implementation, you would use an actual YouTube download API
+      // For demonstration purposes, we'll create a direct link to a hypothetical service
+      // that handles the downloading based on video ID and format
+      const videoId = videoInfo.videoId;
+      let downloadUrl;
+      
+      if (format === 'mp3') {
+        // Audio download
+        downloadUrl = `https://api.example.com/youtube-dl/audio/${videoId}?quality=${quality}`;
+      } else {
+        // Video download
+        downloadUrl = `https://api.example.com/youtube-dl/video/${videoId}?format=${format}&quality=${quality}`;
+      }
+      
+      // Simulate server processing time
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      
+      clearInterval(progressInterval);
+      setProgress(100);
       
       // Check if user is on mobile
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       
       if (isMobile) {
-        // Mobile-specific download approach
-        try {
-          // Create a data URL for direct download
-          const reader = new FileReader();
-          reader.onload = function() {
-            const dataUrl = reader.result;
-            
-            // Create a visible download link that will respond to user interaction
-            const downloadLink = document.createElement('a');
-            downloadLink.href = dataUrl as string;
-            downloadLink.download = `youtube-${videoInfo.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.${format}`;
-            downloadLink.textContent = "Download Video";
-            downloadLink.className = "mobile-download-link";
-            downloadLink.style.display = "block";
-            downloadLink.style.marginTop = "20px";
-            downloadLink.style.padding = "12px";
-            downloadLink.style.backgroundColor = "var(--primary)";
-            downloadLink.style.color = "white";
-            downloadLink.style.borderRadius = "6px";
-            downloadLink.style.textAlign = "center";
-            downloadLink.style.textDecoration = "none";
-            downloadLink.style.fontWeight = "bold";
-            
-            // Find a good place to append the link
-            const downloadContainer = document.createElement('div');
-            downloadContainer.id = "mobile-download-container";
-            downloadContainer.appendChild(downloadLink);
-            
-            // Remove any existing download containers first
-            const existingContainer = document.getElementById("mobile-download-container");
-            if (existingContainer) {
-              existingContainer.remove();
-            }
-            
-            // Add it to the page within the video info container
-            const buttonContainer = document.querySelector('.mt-6.flex.gap-2');
-            if (buttonContainer) {
-              buttonContainer.parentElement?.appendChild(downloadContainer);
-            }
-            
-            toast({
-              title: "Download ready",
-              description: "Tap the Download Video button to save your file.",
-            });
-          };
-          reader.readAsDataURL(blob);
-        } catch (error) {
-          console.error("Mobile download error:", error);
-          // Fallback to traditional method if the mobile approach fails
-          downloadTraditional();
+        // For mobile, create a visible download button that opens the URL directly
+        const downloadContainer = document.createElement('div');
+        downloadContainer.id = "mobile-download-container";
+        
+        const downloadLink = document.createElement('a');
+        downloadLink.href = downloadUrl;
+        downloadLink.target = "_blank";
+        downloadLink.rel = "noopener noreferrer";
+        downloadLink.textContent = "Download Video";
+        downloadLink.className = "mobile-download-link";
+        downloadLink.style.display = "block";
+        downloadLink.style.marginTop = "20px";
+        downloadLink.style.padding = "12px";
+        downloadLink.style.backgroundColor = "var(--primary)";
+        downloadLink.style.color = "white";
+        downloadLink.style.borderRadius = "6px";
+        downloadLink.style.textAlign = "center";
+        downloadLink.style.textDecoration = "none";
+        downloadLink.style.fontWeight = "bold";
+        
+        downloadContainer.appendChild(downloadLink);
+        
+        // Remove any existing download containers first
+        const existingContainer = document.getElementById("mobile-download-container");
+        if (existingContainer) {
+          existingContainer.remove();
+        }
+        
+        // Add it to the page near the download button
+        const buttonContainer = document.querySelector('.mt-6.flex.gap-2');
+        if (buttonContainer) {
+          buttonContainer.parentElement?.appendChild(downloadContainer);
         }
       } else {
-        // Desktop download approach
-        downloadTraditional();
-      }
-      
-      function downloadTraditional() {
-        // Create a download link with proper attributes for cross-browser compatibility
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `youtube-${videoInfo.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.${format}`;
-        // Set these attributes to help with download on mobile
-        a.setAttribute("target", "_blank");
-        a.setAttribute("rel", "noopener noreferrer");
-        // Make the element visible to ensure it works on mobile
-        a.style.display = "none";
-        // Append to document body
-        document.body.appendChild(a);
-        // Use a timeout to allow the browser to process
-        setTimeout(() => {
-          a.click();
-          // Clean up
-          setTimeout(() => {
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-          }, 100);
-        }, 0);
+        // For desktop, open the download in a new tab
+        window.open(downloadUrl, '_blank');
       }
 
       toast({
-        title: "Download complete",
-        description: "Your video has been downloaded successfully.",
+        title: "Download initiated",
+        description: "Your download should begin automatically. If not, click the download button.",
       });
 
       // Reset the state after a delay
